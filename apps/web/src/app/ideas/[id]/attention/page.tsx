@@ -19,10 +19,10 @@ import { getIdea, getAttentionEconomics, calculateAttentionEconomics } from "@/l
 import { Brain, ArrowRight } from "lucide-react";
 
 const schema = z.object({
-  time_per_interaction_sec: z.coerce.number().min(1),
-  frequency_per_week: z.coerce.number().min(0.1),
-  cognitive_load_score: z.coerce.number().min(1).max(10),
-  emotional_friction_score: z.coerce.number().min(1).max(10),
+  time_per_interaction_sec: z.string().min(1),
+  frequency_per_week: z.string().min(1),
+  cognitive_load_score: z.string().min(1),
+  emotional_friction_score: z.string().min(1),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -48,7 +48,13 @@ export default function AttentionEconomicsPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const mutation = useMutation({
-    mutationFn: (data: FormData) => calculateAttentionEconomics(id, data),
+    mutationFn: (data: FormData) =>
+      calculateAttentionEconomics(id, {
+        time_per_interaction_sec: Number(data.time_per_interaction_sec),
+        frequency_per_week: Number(data.frequency_per_week),
+        cognitive_load_score: Number(data.cognitive_load_score),
+        emotional_friction_score: Number(data.emotional_friction_score),
+      }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["attention", id] });
     },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, KeyboardEvent } from "react";
+import { Suspense, useState, KeyboardEvent } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,15 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function NewIdeaPage() {
+export default function NewIdeaPageWrapper() {
+  return (
+    <Suspense fallback={<div className="p-6 text-zinc-500">Loading...</div>}>
+      <NewIdeaPage />
+    </Suspense>
+  );
+}
+
+function NewIdeaPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const workspace = useWorkspaceStore((s) => s.current);

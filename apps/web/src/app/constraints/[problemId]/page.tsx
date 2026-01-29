@@ -27,13 +27,11 @@ import {
 import { Lock, X, Plus, ArrowRight, CheckCircle } from "lucide-react";
 
 const schema = z.object({
-  attention_budget_seconds: z.coerce
-    .number()
-    .min(1, "Must be at least 1 second"),
+  attention_budget_seconds: z.string().min(1, "Required"),
   cadence: z.string().min(1, "Cadence is required"),
 });
 
-type FormData = z.output<typeof schema>;
+type FormData = z.infer<typeof schema>;
 
 function TagInput({
   label,
@@ -122,7 +120,7 @@ export default function ConstraintsPage() {
   const createMutation = useMutation({
     mutationFn: async (data: FormData) => {
       const cs = await createConstraints(problemId, {
-        attention_budget_seconds: data.attention_budget_seconds,
+        attention_budget_seconds: Number(data.attention_budget_seconds),
         cadence: data.cadence,
         workflow_systems: workflowSystems,
         non_negotiables: nonNegotiables,
